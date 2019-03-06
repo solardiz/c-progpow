@@ -190,11 +190,9 @@ static inline bool ethash_io_mutable_name(
 	char* output
 )
 {
-    uint64_t hash = *((uint64_t*)seed_hash);
-#if LITTLE_ENDIAN == BYTE_ORDER
-    hash = ethash_swap_u64(hash);
-#endif
-    return snprintf(output, DAG_MUTABLE_NAME_MAX_SIZE, "full-R%u-%016" PRIx64, revision, hash) >= 0;
+    const unsigned char *hash = (const unsigned char *)seed_hash;
+    return snprintf(output, DAG_MUTABLE_NAME_MAX_SIZE, "full-R%u-%02x%02x%02x%02x%02x%02x%02x%02x", revision,
+        hash[0], hash[1], hash[2], hash[3], hash[4], hash[5], hash[6], hash[7]) >= 0;
 }
 
 #ifdef __cplusplus

@@ -19,6 +19,8 @@
  * @date 2015
  */
 
+#define _POSIX_SOURCE /* for fileno() */
+
 #include "io.h"
 #include <sys/types.h>
 #include <sys/stat.h>

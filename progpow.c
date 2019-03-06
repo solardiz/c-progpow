@@ -13,12 +13,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/* From sample build/kernel.cl */
-#define PROGPOW_DAG_BYTES 3028287104u
+#include "progpow.h"
 
 /* These are from libprogpow/ProgPow.h */
-// blocks before changing the random program
-#define PROGPOW_PERIOD          50
 // lanes that work together calculating a hash
 #define PROGPOW_LANES           16
 // uint32 registers per lane
@@ -73,12 +70,6 @@ static uint32_t bswap(uint32_t a)
     a = (a << 16) | (a >> 16);
     return ((a & 0x00ff00ff) << 8) | ((a >> 8) & 0x00ff00ff);
 }
-
-/* hash32_t and keccak* are from libethash-cl/CLMiner_kernel.cl */
-typedef struct
-{
-    uint32_t uint32s[32 / sizeof(uint32_t)];
-} hash32_t;
 
 // Implementation based on:
 // https://github.com/mjosaarinen/tiny_sha3/blob/master/sha3.c
@@ -282,7 +273,8 @@ static void progPowLoop(
     const uint64_t prog_seed,
     const uint32_t loop,
     uint32_t mix[PROGPOW_LANES][PROGPOW_REGS],
-    const uint32_t *dag)
+    const uint32_t *dag,
+    const uint64_t dag_bytes)
 {
     // dag_entry holds the 256 bytes of data loaded from the DAG
     uint32_t dag_entry[PROGPOW_LANES][PROGPOW_DAG_LOADS];
@@ -290,7 +282,7 @@ static void progPowLoop(
     // The source lane's mix[0] value is used to ensure the last loop's DAG data feeds into this loop's address.
     // dag_addr_base is which 256-byte entry within the DAG will be accessed
     uint32_t dag_addr_base = mix[loop%PROGPOW_LANES][0] %
-        (PROGPOW_DAG_BYTES / (PROGPOW_LANES*PROGPOW_DAG_LOADS*sizeof(uint32_t)));
+        (dag_bytes / (PROGPOW_LANES*PROGPOW_DAG_LOADS*sizeof(uint32_t)));
     for (int l = 0; l < PROGPOW_LANES; l++)
     {
         // Lanes access DAG_LOADS sequential words from the dag entry
@@ -360,8 +352,8 @@ hash32_t progPowHash(
     const uint64_t prog_seed, // value is (block_number/PROGPOW_PERIOD)
     const uint64_t nonce,
     const hash32_t header,
-    const uint32_t *dag // gigabyte DAG located in framebuffer - the first portion gets cached
-)
+    const uint32_t *dag, // gigabyte DAG located in framebuffer - the first portion gets cached
+    const uint64_t dag_bytes)
 {
     uint32_t mix[PROGPOW_LANES][PROGPOW_REGS];
     hash32_t digest;
@@ -379,7 +371,7 @@ hash32_t progPowHash(
 
     // execute the randomly generated inner loop
     for (int i = 0; i < PROGPOW_CNT_DAG; i++)
-        progPowLoop(prog_seed, i, mix, dag);
+        progPowLoop(prog_seed, i, mix, dag, dag_bytes);
 
     // Reduce mix data to a per-lane 32-bit digest
     uint32_t digest_lane[PROGPOW_LANES];

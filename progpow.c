@@ -71,6 +71,8 @@ static uint32_t bswap(uint32_t a)
     return ((a & 0x00ff00ff) << 8) | ((a >> 8) & 0x00ff00ff);
 }
 
+/* keccak* are from libethash-cl/CLMiner_kernel.cl */
+
 // Implementation based on:
 // https://github.com/mjosaarinen/tiny_sha3/blob/master/sha3.c
 

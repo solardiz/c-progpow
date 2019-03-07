@@ -19,31 +19,37 @@
 #include "libethash/ethash.h"
 #include "progpow.h"
 
-static void unhex(void *dst, const char *src)
+static uint32_t bswap(uint32_t a)
+{
+	a = (a << 16) | (a >> 16);
+	return ((a & 0x00ff00ff) << 8) | ((a >> 8) & 0x00ff00ff);
+}
+
+static void unhex(hash32_t *dst, const char *src)
 {
 	const char *p = src;
-	unsigned char *q = dst;
-	unsigned char v = 0;
+	uint32_t *q = dst->uint32s;
+	uint32_t v = 0;
 
-	while (*p) {
+	while (*p && q <= &dst->uint32s[7]) {
 		if (*p >= '0' && *p <= '9')
 			v |= *p - '0';
 		else if (*p >= 'a' && *p <= 'f')
 			v |= *p - ('a' - 10);
 		else
 			break;
-		if ((p++ - src) & 1)
-			*q++ = v;
+		if (!((++p - src) & 7))
+			*q++ = bswap(v);
 		v <<= 4;
 	}
 }
 
-static void printhex(const void *src, size_t size)
+static void printhex(const hash32_t *src)
 {
-	const unsigned char *p = src;
+	const uint32_t *p = src->uint32s;
 
-	while (size--)
-		printf("%02x", *p++);
+	while (p <= &src->uint32s[7])
+		printf("%08x", bswap(*p++));
 }
 
 static int ethash_full_new_callback(unsigned int percent)
@@ -78,7 +84,7 @@ int main(void)
 	    nonce, header, ethash_full_dag(full), ethash_full_dag_size(full));
 
 	printf("Digest = ");
-	printhex(&digest, sizeof(digest));
+	printhex(&digest);
 	putchar('\n');
 
 	return 0;

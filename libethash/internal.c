@@ -33,13 +33,7 @@
 #include "data_sizes.h"
 #include "io.h"
 
-#ifdef WITH_CRYPTOPP
-
-#include "sha3_cryptopp.h"
-
-#else
 #include "sha3.h"
-#endif // WITH_CRYPTOPP
 
 uint64_t ethash_get_datasize(uint64_t const block_number)
 {

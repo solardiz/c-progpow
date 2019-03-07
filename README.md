@@ -23,6 +23,18 @@ Digest = 11f19805c58ab46610ff9c719dcf0a5f18fa2f1605798eef770c47219274767d
 
 which matches upstream ProgPoW's test-vectors.md.
 
+## Known issues
+
+This implementation of ProgPoW is effectively untested on big-endian because
+Ethash's included implementation of Keccak assumes little-endian (and more):
+https://github.com/coruus/keccak-tiny/issues/7
+
+The included implementation of Ethash DAG initialization contains currently
+disabled code that would use SSE4.1 intrinsics for some speedup.  That code
+is currently broken (at least) because the same implementation misaligns the
+data buffer (shifting it from the properly aligned mmap()'ed region by the
+8-byte magic value, thereby never achieving the needed 16-byte alignment).
+
 ## License
 
 Both Ethereum's ethash and upstream ProgPoW were under GPLv3, which is how we

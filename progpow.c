@@ -129,6 +129,34 @@ static void keccak_f800_round(uint32_t st[25], const int r)
 }
 
 /* Most of the below is based on pieces from upstream ProgPoW README.md */
+static hash32_t keccak_f800_progpow(hash32_t header, uint64_t seed, hash32_t digest)
+{
+    uint32_t st[25];
+
+    // Initialization
+    for (int i = 0; i < 25; i++)
+        st[i] = 0;
+
+    // Absorb phase for fixed 18 words of input
+    for (int i = 0; i < 8; i++)
+        st[i] = header.uint32s[i];
+    st[8] = seed;
+    st[9] = seed >> 32;
+    for (int i = 0; i < 8; i++)
+        st[10+i] = digest.uint32s[i];
+
+    // keccak_f800 call for the single absorb pass
+    for (int r = 0; r < 22; r++)
+        keccak_f800_round(st, r);
+
+    // Squeeze phase for fixed 8 words of output
+    hash32_t ret;
+    for (int i = 0; i < 8; i++)
+        ret.uint32s[i] = st[i];
+
+    return ret;
+}
+
 static const uint32_t FNV_PRIME = 0x1000193;
 static const uint32_t FNV_OFFSET_BASIS = 0x811c9dc5;
 
@@ -171,34 +199,6 @@ static void fill_mix(
     st.jcong = fnv1a(st.jsr, lane_id);
     for (int i = 0; i < PROGPOW_REGS; i++)
             mix[i] = kiss99(&st);
-}
-
-static hash32_t keccak_f800_progpow(hash32_t header, uint64_t seed, hash32_t digest)
-{
-    uint32_t st[25];
-
-    // Initialization
-    for (int i = 0; i < 25; i++)
-        st[i] = 0;
-
-    // Absorb phase for fixed 18 words of input
-    for (int i = 0; i < 8; i++)
-        st[i] = header.uint32s[i];
-    st[8] = seed;
-    st[9] = seed >> 32;
-    for (int i = 0; i < 8; i++)
-        st[10+i] = digest.uint32s[i];
-
-    // keccak_f800 call for the single absorb pass
-    for (int r = 0; r < 22; r++)
-        keccak_f800_round(st, r);
-
-    // Squeeze phase for fixed 8 words of output
-    hash32_t ret;
-    for (int i=0; i<8; i++)
-        ret.uint32s[i] = st[i];
-
-    return ret;
 }
 
 static void progPowInit(kiss99_t *prog_rnd, uint64_t prog_seed, int mix_seq_dst[PROGPOW_REGS], int mix_seq_src[PROGPOW_REGS])

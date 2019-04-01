@@ -15,6 +15,8 @@
 
 #include "progpow.h"
 
+progPowStats_t *progPowStats = NULL;
+
 /* These are from libprogpow/ProgPow.h */
 // lanes that work together calculating a hash
 #define PROGPOW_LANES           16
@@ -240,6 +242,10 @@ static void progPowInit(kiss99_t *prog_rnd, uint64_t prog_seed, int mix_seq_dst[
 // (IE don't do A&B)
 static uint32_t merge(uint32_t a, uint32_t b, uint32_t r)
 {
+    if (progPowStats) {
+        progPowStats->merge_total++;
+        progPowStats->merge[r % 4]++;
+    }
     switch (r % 4)
     {
     default: // pacify the compiler
@@ -254,6 +260,10 @@ static uint32_t merge(uint32_t a, uint32_t b, uint32_t r)
 // Random math between two input values
 static uint32_t math(uint32_t a, uint32_t b, uint32_t r)
 {
+    if (progPowStats) {
+        progPowStats->math_total++;
+        progPowStats->math[r % 11]++;
+    }
     switch (r % 11)
     {
     default: // pacify the compiler

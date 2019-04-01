@@ -20,6 +20,16 @@ hash32_t progPowHash(
     const uint32_t *dag, // gigabyte DAG located in framebuffer - the first portion gets cached
     const uint64_t dag_bytes);
 
+typedef struct
+{
+    unsigned long merge_total;
+    unsigned long merge[4];
+    unsigned long math_total;
+    unsigned long math[11];
+} progPowStats_t;
+
+extern progPowStats_t *progPowStats;
+
 #ifdef __cplusplus
 }
 #endif

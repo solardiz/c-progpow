@@ -19,9 +19,15 @@ run, it currently computes and caches on disk Ethash's ~1 GB DAG for block 30k,
 then computes ProgPoW using a set of nonce and header values found in upstream
 ProgPoW's test-vectors.md.  The expected output is:
 
+```
+Light DAG init done
+Full DAG init done
 Digest = 11f19805c58ab46610ff9c719dcf0a5f18fa2f1605798eef770c47219274767d
+Merge 36864 total (8192 12288 5120 11264)
+Math  20480 total (2048 4096 2048 1024 2048 1024 4096 1024 1024 2048 0)
+```
 
-which matches upstream ProgPoW's test-vectors.md.
+where the digest matches upstream ProgPoW's test-vectors.md.
 
 ## Known issues
 

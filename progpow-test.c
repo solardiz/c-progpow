@@ -60,11 +60,20 @@ static int ethash_full_new_callback(unsigned int percent)
 
 int main(void)
 {
+#if 1
 	uint64_t block_number = 30000;
 	uint64_t nonce = 0x123456789abcdef0;
 	hash32_t header;
-
 	unhex(&header, "ffeeddccbbaa9988776655443322110000112233445566778899aabbccddeeff");
+#else
+	uint64_t block_number = 10000000;
+	uint64_t nonce = 0x005e30899481055e;
+	hash32_t header;
+	unhex(&header, "efda178de857b2b1703d8d5403bd0f848e19cff5c50ba5c0d6210ddb16250ec3");
+#endif
+
+	static progPowStats_t stats; /* assumed zero-initialized */
+	progPowStats = &stats;
 
 	ethash_light_t light = ethash_light_new(block_number);
 	if (!light) {
@@ -86,6 +95,15 @@ int main(void)
 	printf("Digest = ");
 	printhex(&digest);
 	putchar('\n');
+
+	unsigned int i;
+	printf("Merge %lu total ", stats.merge_total);
+	for (i = 0; i < 4; i++)
+		printf("%c%lu", i ? ' ' : '(', stats.merge[i]);
+	printf(")\nMath  %lu total ", stats.math_total);
+	for (i = 0; i < 11; i++)
+		printf("%c%lu", i ? ' ' : '(', stats.math[i]);
+	puts(")");
 
 	return 0;
 }

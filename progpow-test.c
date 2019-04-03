@@ -61,12 +61,12 @@ static int ethash_full_new_callback(unsigned int percent)
 int main(void)
 {
 #if 1
-	uint64_t block_number = 30000;
+	unsigned int block_number = 30000;
 	uint64_t nonce = 0x123456789abcdef0;
 	hash32_t header;
 	unhex(&header, "ffeeddccbbaa9988776655443322110000112233445566778899aabbccddeeff");
 #else
-	uint64_t block_number = 10000000;
+	unsigned int block_number = 10000000;
 	uint64_t nonce = 0x005e30899481055e;
 	hash32_t header;
 	unhex(&header, "efda178de857b2b1703d8d5403bd0f848e19cff5c50ba5c0d6210ddb16250ec3");
@@ -89,18 +89,21 @@ int main(void)
 	}
 	fprintf(stderr, "Full DAG init done\n");
 
+	printf("ProgPoW version %u.%u.%u\nBlock\t%u\n",
+	    PROGPOW_VERSION / 100, PROGPOW_VERSION % 100 / 10, PROGPOW_VERSION % 10, block_number);
+
 	hash32_t digest = progPowHash(block_number / PROGPOW_PERIOD,
 	    nonce, header, ethash_full_dag(full), ethash_full_dag_size(full));
 
-	printf("Digest = ");
+	printf("Digest\t");
 	printhex(&digest);
 	putchar('\n');
 
 	unsigned int i;
-	printf("Merge %lu total ", stats.merge_total);
+	printf("Merge\t%lu total ", stats.merge_total);
 	for (i = 0; i < 4; i++)
 		printf("%c%lu", i ? ' ' : '(', stats.merge[i]);
-	printf(")\nMath  %lu total ", stats.math_total);
+	printf(")\nMath\t%lu total ", stats.math_total);
 	for (i = 0; i < 11; i++)
 		printf("%c%lu", i ? ' ' : '(', stats.math[i]);
 	puts(")");

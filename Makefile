@@ -10,7 +10,7 @@
 CC = gcc
 LD = $(CC)
 RM = rm -f
-CFLAGS = -std=c99 -Wall -O2
+CFLAGS = -std=c99 -Wall -O2 #-DPROGPOW_VERSION=93
 LDFLAGS = -s -lm
 
 PROJ = progpow-test

@@ -22,12 +22,27 @@ ProgPoW's test-vectors.md.  The expected output is:
 ```
 Light DAG init done
 Full DAG init done
-Digest = 11f19805c58ab46610ff9c719dcf0a5f18fa2f1605798eef770c47219274767d
-Merge 36864 total (8192 12288 5120 11264)
-Math  20480 total (2048 4096 2048 1024 2048 1024 4096 1024 1024 2048 0)
+ProgPoW version 0.9.2
+Block   30000
+Digest  11f19805c58ab46610ff9c719dcf0a5f18fa2f1605798eef770c47219274767d
+Merge   36864 total (8192 12288 5120 11264)
+Math    20480 total (2048 4096 2048 1024 2048 1024 4096 1024 1024 2048 0)
 ```
 
 where the digest matches upstream ProgPoW's test-vectors.md.
+
+To compute the proposed ProgPoW version 0.9.3 instead, uncomment
+`-DPROGPOW_VERSION=93` in `Makefile`.  The expected output becomes:
+
+```
+Light DAG init done
+Full DAG init done
+ProgPoW version 0.9.3
+Block   30000
+Digest  6018c151b0f9895ebe44a4ca6ce2829e5ba6ae1a68a4ccd05a67ac01219655c1
+Merge   33792 total (8192 7168 10240 8192)
+Math    18432 total (0 2048 0 5120 5120 0 0 0 4096 0 2048)
+```
 
 ## Known issues
 

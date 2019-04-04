@@ -184,7 +184,7 @@ static void fill_mix(
     st.jsr = fnv1a(st.w, lane_id);
     st.jcong = fnv1a(st.jsr, lane_id);
     for (int i = 0; i < PROGPOW_REGS; i++)
-            mix[i] = kiss99(&st);
+        mix[i] = kiss99(&st);
 }
 
 static void progPowInit(kiss99_t *prog_rnd, uint64_t prog_seed, int mix_seq_dst[PROGPOW_REGS], int mix_seq_src[PROGPOW_REGS])

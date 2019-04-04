@@ -57,6 +57,10 @@ typedef struct
     unsigned long merge[4];
     unsigned long math_total;
     unsigned long math[11];
+    unsigned long dag_loads;
+    unsigned long dag_load_bytes;
+    unsigned long cache_loads;
+    unsigned long cache_load_bytes;
 } progPowStats_t;
 
 extern progPowStats_t *progPowStats;

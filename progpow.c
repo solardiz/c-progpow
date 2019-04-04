@@ -226,7 +226,8 @@ static void progPowInit(kiss99_t *prog_rnd, uint64_t prog_seed, int mix_seq_dst[
 // (IE don't do A&B)
 static uint32_t merge(uint32_t a, uint32_t b, uint32_t r)
 {
-    if (progPowStats) {
+    if (progPowStats)
+    {
         progPowStats->merge_total++;
         progPowStats->merge[r % 4]++;
     }
@@ -244,7 +245,8 @@ static uint32_t merge(uint32_t a, uint32_t b, uint32_t r)
 // Random math between two input values
 static uint32_t math(uint32_t a, uint32_t b, uint32_t r)
 {
-    if (progPowStats) {
+    if (progPowStats)
+    {
         progPowStats->math_total++;
         progPowStats->math[r % 11]++;
     }
@@ -272,6 +274,8 @@ static void progPowLoop(
     const uint32_t *dag,
     const uint64_t dag_bytes)
 {
+    if (progPowStats)
+        progPowStats->dag_loads++;
     // dag_entry holds the 256 bytes of data loaded from the DAG
     uint32_t dag_entry[PROGPOW_LANES][PROGPOW_DAG_LOADS];
     // On each loop iteration rotate which lane is the source of the DAG address.
@@ -286,7 +290,11 @@ static void progPowLoop(
         // This prevents multi-chip ASICs from each storing just a portion of the DAG
         size_t dag_addr_lane = dag_addr_base * PROGPOW_LANES + (l ^ loop) % PROGPOW_LANES;
         for (int i = 0; i < PROGPOW_DAG_LOADS; i++)
+        {
+            if (progPowStats)
+                progPowStats->dag_load_bytes += sizeof(*dag);
             dag_entry[l][i] = dag[dag_addr_lane * PROGPOW_DAG_LOADS + i];
+        }
     }
 
     // Initialize the program seed and sequences
@@ -311,6 +319,11 @@ static void progPowLoop(
             int sel = kiss99(&prog_rnd);
             for (int l = 0; l < PROGPOW_LANES; l++)
             {
+                if (progPowStats)
+                {
+                    progPowStats->cache_loads++;
+                    progPowStats->cache_load_bytes += sizeof(*dag);
+                }
                 uint32_t offset = mix[l][src] % (PROGPOW_CACHE_BYTES/sizeof(uint32_t));
                 mix[l][dst] = merge(mix[l][dst], dag[offset], sel);
             }

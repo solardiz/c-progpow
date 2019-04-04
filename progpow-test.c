@@ -99,6 +99,11 @@ int main(void)
 	printhex(&digest);
 	putchar('\n');
 
+	printf("DAG\t%lu loads, %lu bytes\n"
+	    "Cache\t%lu loads, %lu bytes\n",
+	    stats.dag_loads, stats.dag_load_bytes,
+	    stats.cache_loads, stats.cache_load_bytes);
+
 	unsigned int i;
 	printf("Merge\t%lu total ", stats.merge_total);
 	for (i = 0; i < 4; i++)

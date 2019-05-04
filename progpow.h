@@ -49,7 +49,8 @@ hash32_t progPowHash(
     const uint64_t nonce,
     const hash32_t header,
     const uint32_t *dag, // gigabyte DAG located in framebuffer - the first portion gets cached
-    const uint64_t dag_bytes);
+    const uint64_t dag_bytes,
+    hash32_t *digest_buf);
 
 typedef struct
 {

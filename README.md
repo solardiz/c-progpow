@@ -25,6 +25,7 @@ Full DAG init done
 ProgPoW version 0.9.2
 Block	30000
 Digest	11f19805c58ab46610ff9c719dcf0a5f18fa2f1605798eef770c47219274767d
+Result	5b7ccd472dbefdd95b895cac8ece67ff0deb5a6bd2ecc6e162383d00c3728ece
 DAG	64 loads, 16384 bytes
 Cache	12288 loads, 49152 bytes
 Merge	36864 total (8192 12288 5120 11264)
@@ -42,6 +43,7 @@ Full DAG init done
 ProgPoW version 0.9.3
 Block	30000
 Digest	6018c151b0f9895ebe44a4ca6ce2829e5ba6ae1a68a4ccd05a67ac01219655c1
+Result	34d8436444aa5c61761ce0bcce0f11401df2eace77f5c14ba7039b86b5800c08
 DAG	64 loads, 16384 bytes
 Cache	11264 loads, 45056 bytes
 Merge	33792 total (8192 7168 10240 8192)

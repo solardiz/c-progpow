@@ -92,11 +92,15 @@ int main(void)
 	printf("ProgPoW version %u.%u.%u\nBlock\t%u\n",
 	    PROGPOW_VERSION / 100, PROGPOW_VERSION % 100 / 10, PROGPOW_VERSION % 10, block_number);
 
-	hash32_t digest = progPowHash(block_number / PROGPOW_PERIOD,
-	    nonce, header, ethash_full_dag(full), ethash_full_dag_size(full));
+	hash32_t digest;
+	hash32_t result = progPowHash(block_number / PROGPOW_PERIOD,
+	    nonce, header, ethash_full_dag(full), ethash_full_dag_size(full),
+	    &digest);
 
 	printf("Digest\t");
 	printhex(&digest);
+	printf("\nResult\t");
+	printhex(&result);
 	putchar('\n');
 
 	printf("DAG\t%lu loads, %lu bytes\n"

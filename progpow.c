@@ -362,7 +362,8 @@ hash32_t progPowHash(
     const uint64_t nonce,
     const hash32_t header,
     const uint32_t *dag, // gigabyte DAG located in framebuffer - the first portion gets cached
-    const uint64_t dag_bytes)
+    const uint64_t dag_bytes,
+    hash32_t *digest_buf)
 {
     uint32_t mix[PROGPOW_LANES][PROGPOW_REGS];
     hash32_t digest;
@@ -396,8 +397,9 @@ hash32_t progPowHash(
     for (int l = 0; l < PROGPOW_LANES; l++)
         digest.uint32s[l%8] = fnv1a(digest.uint32s[l%8], digest_lane[l]);
 
-    // keccak(header .. keccak(header..nonce) .. digest);
-    keccak_f800_progpow(header, seed, digest);
+    if (digest_buf)
+        *digest_buf = digest;
 
-    return digest;
+    // keccak(header .. keccak(header..nonce) .. digest);
+    return keccak_f800_progpow(header, seed, digest);
 }
